@@ -1,0 +1,707 @@
+#include<iostream>
+#include<conio.h>
+#include<stdlib.h>
+#include<stdio.h>
+#include<fstream>
+#include<ctime>
+#include<string.h>
+
+using namespace std;
+
+typedef struct data DATA;
+struct data{
+	int dia;
+	int mes;
+	int ano;
+};
+typedef struct alunos ListaALunos;
+struct alunos{
+	char nome[50];
+	char nomeMae[50];
+	char cidadeNascimento[50];
+	char curso[50];
+	DATA niver;
+	int cpf[11];
+	int matricula;	
+};
+void menuPrincipal();
+void cadastrar();
+void Listar();
+void pesquisar();
+int matricula(int matr);
+inline bool validarCPF(const int * const cpf);
+void remover();
+void ler(int po, int po2[]);
+
+int main() {
+	menuPrincipal();
+	
+	return 0;
+}
+void menuPrincipal(){
+	int op;
+	do{
+		cout<<"\tMENU PRINCIPAL\n\n1 - Cadastrar Aluno\n2 - Remover Aluno\n3 - Listar ALunos\n4 - Buscar Aluno\n5 - Estatisticas do Cadastro\n6 - SAIR\n";
+		cout<<"\nEscolha uma opcao de acordo com o numero correspondente:\n";
+		cin>>op;
+		
+		switch(op){
+		case 1:
+			system("CLS");
+			cadastrar();
+			break;
+		case 2:
+			system("cls");
+			remover();
+			break;
+		case 3:
+			system("cls");
+			Listar();
+			break;
+		case 4:
+			system("CLS");
+			pesquisar();
+			break;
+		case 5:
+			break;
+		case 6:
+			cout <<"Saindo....";
+			exit(0);
+		default:
+			cout <<"Opcao invalida\n";
+			getch();
+			system("CLS");
+			menuPrincipal();	
+	}
+	}while(op=!6);
+	
+	
+	
+}
+void cadastrar(){
+	FILE* arquivo;
+	FILE* arquivo2;
+	bool bo = false;
+	bool resp;
+	alunos al;
+	int opcurso,opcurso2;
+	int entrada=2;
+	int cpf2[12];
+	int cpf[12];
+	char ent[12];
+	int op;
+	int mat2;
+	int mat=100000;
+	int dia,mes,ano;
+	
+	arquivo = fopen("Arquivos.txt","ab");
+	arquivo2=fopen("Matricula.txt","rb");
+	if(arquivo == NULL){
+		cout <<"Erro na arbetura do arquivo";
+	}
+	else {
+		do {
+			
+			cout<<"------------------------------\nMENU CADASTRO\n------------------------------\n";
+			fflush(stdin);
+			cout <<"Digite o nome: ";
+			gets(al.nome);
+			fflush(stdin);
+			
+			fflush(stdin);
+			cout <<"\nDigite o CPF *escreva os numeros sem pontos ou traco* : ";
+			cin>>ent;
+			for(char i = 0; i < 11; i++)
+    {
+        cpf[i] = static_cast<int>(ent[i] - 48); 
+         if(cpf[i]<0||cpf[i]>9){
+        	entrada=1;
+        
+		}
+		else {
+			
+			cpf2[i]=cpf[i];
+		}
+    }
+    resp=validarCPF(cpf2);
+	if(resp==false){
+		entrada=1;
+	}
+	else entrada=0;
+	if(resp==true&&entrada==0){
+		for(int k=0;k<11;k++){
+			al.cpf[k]=cpf2[k];
+		}
+	}	
+    while(entrada==1){
+    	cout<<"CPF invalido, digite novamente:\n";
+    	cin>>ent;
+    	if(ent[11]==NULL){
+    	for(char x=0;x<11;x++){
+    		
+    		cpf[x] = static_cast<int>(ent[x] - 48);
+	   
+    	if(cpf[x]<0||cpf[x]>9){
+        	entrada=1;
+        	
+		}else {
+			entrada=0;
+			cpf2[x]=cpf[x];
+		}
+		
+	
+		
+	
+	
+}
+resp=validarCPF(cpf2);
+if(entrada==0&&resp==true){
+	for(int l=0;l<11;l++){
+		al.cpf[l]=cpf[l];
+	}
+	
+}else entrada=1;
+}
+else entrada=1;
+}
+
+	
+			do{
+				
+			fflush(stdin);
+			cout <<"\nEscolha um curso:\n1 - Eng. Eletrica  \t6 - Letras\n2 - Eng. Civil \t\t7 - Historia \n3 - Quimica \t\t8 - Educacao Fisica \n";
+			cout<<"4 - Fisica \t\t9 - Enfermagem \n5 - Computacao \t\t10 - Medicina\n"<<"Escolha um numero de acordo com o nome do curso: ";
+			cin>>opcurso;
+			switch(opcurso){
+					case 1:
+					strcpy(al.curso,"Engenharia Eletrica");	
+					break;
+					case 2:
+					strcpy(al.curso,"Engenharia Civil");
+					break;
+					case 3:
+					strcpy(al.curso,"Quimica");
+					break;
+					case 4:
+					strcpy(al.curso,"Fisica");
+					break;
+					case 5:
+					strcpy(al.curso,"Computacao");
+					break;
+					case 6:
+					strcpy(al.curso,"Letras");
+					break;
+					case 7:
+					strcpy(al.curso,"Historia");
+					break;
+					case 8:
+					strcpy(al.curso,"Educacao Fisica");
+					break;
+					case 9:
+					strcpy(al.curso,"Enfermagem");
+					break;
+					case 10:
+					strcpy(al.curso,"Medicina");
+					break;
+					default:
+						cout<<"Numero invalido, tente novamente!";
+			}			
+		}while(opcurso<1||opcurso>10);
+			
+			
+			
+			fflush(stdin);
+			cout <<"\nDigite a cidade onde nasceu: ";
+			gets(al.cidadeNascimento);
+			
+			fflush(stdin);
+			cout <<"\nDigite o nome da mae: ";
+			gets(al.nomeMae);
+			
+			fflush(stdin);
+			cout <<"Digite a data de nascimento:\n";
+			cout <<"DIA: ";
+			cin>>dia;
+			fflush(stdin);
+			while(dia<1||dia>30){
+				cout<<"\nopcao invalida, digite o dia novamente: ";
+				cin>>dia;
+			}
+			al.niver.dia=dia;
+			cout<<"\nMES: ";
+			cin>>mes;
+			while(mes<1||mes>12){
+				cout<<"\nopcao invalida, digite o mes novamente: ";
+				cin>>mes;
+			};
+			al.niver.mes=mes;
+			fflush(stdin);
+			cout<<"\nANO:";
+			cin>>ano;
+			while(ano<1918||ano>2018){
+				cout<<"\nopcao invalida, digite o ano novamente: ";
+				cin>>ano;
+			}
+			al.niver.ano=ano;
+			
+			mat2=matricula(mat);
+			al.matricula=mat2;
+			cout<<"\nCadastro Concluido! Matricula : "<< mat2<<"\n";
+			
+			
+			fwrite(&al,sizeof(alunos), 1,arquivo);
+			fclose(arquivo);
+			arquivo = fopen("Arquivos.txt","ab");
+			cout<<"quer continuar cadastrando?\n 1-SIM \n 2-VOLTAR AO MENU PRINCIPAL\n";
+			cin>>op;
+			if(op==2){
+				system("cls");
+				fclose(arquivo);
+				main();
+			}
+		}while(op==1);
+		fclose(arquivo);
+	}
+}
+void Listar(){
+	int opc2;
+	char mes[25];
+	int opc;
+		FILE* arquivo;
+	alunos al;
+	int op;
+	arquivo = fopen("Arquivos.txt","rb");
+	if(arquivo == NULL){
+		cout <<"Erro na arbetura do arquivo";
+	}
+	else{
+		while(fread(&al,sizeof(alunos), 1, arquivo)==1){
+			if(al.matricula<9999999){
+			cout<<"\nnome: "<<al.nome<<"\n";
+			
+			cout<<"\nMatricula: "<<al.matricula<<"\n";
+			
+			cout<<"\ncpf: ";
+			for(int x=0;x<11;x++){
+			cout<<al.cpf[x];
+			if(x==2){
+				cout<<".";
+			}
+			if(x==5){
+				cout<<".";
+			}
+			if(x==8){
+				cout<<"-";
+			}
+		}
+			cout<<"\n\ncurso: "<<al.curso<<"\n";
+		
+			cout<<"\ncidade onde nasceu: "<<al.cidadeNascimento<<"\n";
+
+			cout<<"\nnome da mae: "<<al.nomeMae<<"\n";
+				switch(al.niver.mes){
+				case 1:
+					strcpy(mes," de Janeiro de ");	
+					break;
+					case 2:
+						strcpy(mes," de Fevereiro de ");
+					break;
+					case 3:
+						strcpy(mes," de Marco de ");
+					break;
+					case 4:
+						strcpy(mes," de Abril de ");
+					break;
+					case 5:
+						strcpy(mes," de Maio de ");
+					break;
+					case 6:
+						strcpy(mes," de Junho de ");
+					break;
+					case 7:
+						strcpy(mes," de Julho de ");
+					break;
+					case 8:
+						strcpy(mes," de Agosto de ");
+					break;
+					case 9:
+						strcpy(mes," de Setembro de ");
+					break;
+					case 10:
+						strcpy(mes," de Outubro de ");
+					break;
+					case 11:
+						strcpy(mes," de Novembro de ");
+					break;
+					case 12:
+						strcpy(mes," de Dezembro de ");
+					break;
+					default:
+					break;
+			}
+			
+			cout<<"\nData de nascimento: "<<al.niver.dia<<mes<<al.niver.ano;
+			cout<<"\n-------------------------------------------------------------------";
+			
+		
+		}
+	}
+	}
+	fclose(arquivo);
+	do{
+	
+	cout<<"\n\n(1) - Voltar ao Menu Inicial  |   (2) - SAIR :\n ";
+	cin>>opc;
+	switch(opc){
+		case 1:
+			fclose(arquivo);
+			system("cls");
+			menuPrincipal();
+			break;
+		case 2:
+			exit(0);
+			break;
+		default:cout<<"Opcao invalida\n ";
+		break;
+	}
+}while(opc<1||opc>2);
+}
+void pesquisar(){
+	int opc2,opc,opc3;
+	char mes[25];
+	bool cpf3 = false ;
+	FILE* arquivo;
+	alunos al;
+	char nome[50];
+	char cidade[50];
+	char curso[50];
+	int matricula;
+	char cpf2[11];
+	int cpf[11];
+	int dia;
+	int mes2;
+	int ano;
+	
+	arquivo = fopen("Arquivos.txt","rb");
+	if(arquivo == NULL){
+		cout<<"erro ao abrir o arquivo de registro";
+	}
+	else{
+		do{
+		cout<<"\tPROCURAR POR: \n";
+		cout<<"1 - Nome \t4 - Data de Nascimento \n2 - Matricula \t5 - Cidade de Nascimento \n3 - CPF \t6 - Curso\n ";
+		cout<<"\nDigite um numero de acordo com a opcao de registro: ";
+		cin>>opc3;
+		switch(opc3){
+		case 1:
+			fflush(stdin);
+			cout<<"\nDigite o nome para pesquisa: ";
+			gets(nome);
+			break;
+		case 2:
+			cout<<"\nDigite a matricula para pesquisa: ";
+			cin>>matricula;
+			break;
+		case 3:
+			cout<<"\nDigite o CPF para pesquisa: ";
+			cin>>cpf2;
+			for(char x=0;x<11;x++){
+				cpf[x] = static_cast<int>(cpf2[x] - 48); 
+			}
+			break;
+		case 4:
+			cout<<"Digite a data de nascimento: \ndia :";
+			cin>>dia;
+			cout<<"mes: ";
+			cin>>mes2;
+			cout<<"ano :";
+			cin>>ano;
+			break;
+		case 5:
+			fflush(stdin);
+			cout<<"Digite a cidade de nascimento :";
+			gets(cidade);
+			break;
+		case 6:
+			fflush(stdin);
+			cout<<"Digite o Curso :";
+			gets(curso);
+			break;
+		default: cout<<"\nOpcao Invalida!\n";
+		break;
+}
+	}while(opc3<1||opc3>6);
+		fflush(stdin);
+		
+		
+		while(fread(&al, sizeof(alunos),1, arquivo)==1){
+		if(al.matricula<9999999){
+			if(strcmp(nome, al.nome)==0||strcmp(curso, al.curso)==0||strcmp(cidade, al.cidadeNascimento)==0||matricula==al.matricula||dia==al.niver.dia&&ano==al.niver.ano&&mes2==al.niver.mes||cpf[0]==al.cpf[0]&&cpf[1]==al.cpf[1]&&cpf[2]==al.cpf[2]&&cpf[3]==al.cpf[3]&&cpf[4]==al.cpf[4]&&cpf[5]==al.cpf[5]&&cpf[6]==al.cpf[6]&&cpf[7]==al.cpf[7]&&cpf[8]==al.cpf[8]&&cpf[9]==al.cpf[9]&&cpf[10]==al.cpf[10])
+			{
+			cout<<"\nnome: "<<al.nome<<"\n";
+			
+			cout<<"\nMatricula: "<<al.matricula<<"\n";
+			
+			cout<<"\ncpf: ";
+			for(int x=0;x<11;x++){
+			cout<<al.cpf[x];
+			if(x==2){
+				cout<<".";
+			}
+			if(x==5){
+				cout<<".";
+			}
+			if(x==8){
+				cout<<"-";
+			}
+		}
+			cout<<"\n\ncurso: "<<al.curso<<"\n";
+		
+			cout<<"\ncidade onde nasceu: "<<al.cidadeNascimento<<"\n";
+
+			cout<<"\nnome da mae: "<<al.nomeMae<<"\n";
+				switch(al.niver.mes){
+				case 1:
+					strcpy(mes," de Janeiro de ");	
+					break;
+					case 2:
+						strcpy(mes," de Fevereiro de ");
+					break;
+					case 3:
+						strcpy(mes," de Marco de ");
+					break;
+					case 4:
+						strcpy(mes," de Abril de ");
+					break;
+					case 5:
+						strcpy(mes," de Maio de ");
+					break;
+					case 6:
+						strcpy(mes," de Junho de ");
+					break;
+					case 7:
+						strcpy(mes," de Julho de ");
+					break;
+					case 8:
+						strcpy(mes," de Agosto de ");
+					break;
+					case 9:
+						strcpy(mes," de Setembro de ");
+					break;
+					case 10:
+						strcpy(mes," de Outubro de ");
+					break;
+					case 11:
+						strcpy(mes," de Novembro de ");
+					break;
+					case 12:
+						strcpy(mes," de Dezembro de ");
+					break;
+					default:
+					break;
+			}
+			
+			cout<<"\nData de nascimento: "<<al.niver.dia<<mes<<al.niver.ano;
+			cout<<"\n-------------------------------------------------------------------";
+		}else {
+		cout <<"\nNenhuma Registro Encontrado!\n";
+		break;}
+	} 
+}
+
+	
+		fclose(arquivo);
+	do{
+	
+	cout<<"\n\n(1) - Voltar ao Menu Inicial  |   (2) - SAIR :\n ";
+	cin>>opc;
+	switch(opc){
+		case 1:
+			fclose(arquivo);
+			system("cls");
+			menuPrincipal();
+			break;
+		case 2:
+			exit(0);
+			break;
+		default:cout<<"Opcao invalida\n ";
+		break;
+	}
+}while(opc<1||opc>2);
+	
+	fclose(arquivo);
+	getch();
+}
+}
+int matricula(int matr){
+
+	FILE* arquivo;
+	alunos al;
+	int mat=matr;
+	arquivo = fopen("Arquivos.txt","rb");
+	if(arquivo == NULL){
+		cout<<"erro ao abrir o arquivo de registro";
+	}
+	else{
+		
+		while(fread(&al, sizeof(alunos),1, arquivo)==1){
+			if(al.matricula==mat){
+				mat=mat+1;
+			}
+			
+		}
+	}
+	
+	
+	fclose(arquivo);
+	
+	return mat;
+}
+inline bool validarCPF(const int * const cpf)
+{
+	
+	
+    int digito1,
+        digito2,
+        temp = 0;
+
+ 
+    
+    for(char x = 0; x < 9; x++)
+        temp += (cpf[x] * (10 - x));
+
+    temp %= 11;
+
+    if(temp < 2)
+        digito1 = 0;
+    else
+        digito1 = 11 - temp;
+
+    
+
+    temp = 0;
+    for(char z = 0; z < 10; z++)
+        temp += (cpf[z] * (11 - z));
+
+    temp %= 11;
+
+    if(temp < 2)
+        digito2 = 0;
+    else
+        digito2 = 11 - temp;
+
+    
+    if(digito1 == cpf[9] && digito2 == cpf[10])
+        return true;
+    else
+        return false;
+}
+
+
+
+
+void remover(){
+	FILE* arquivo;
+	alunos al;
+	int opc,opc2;
+	int op;
+	int resposta=0;
+	int cpf[11];
+	char cpf2[11];
+	int matricula;
+	arquivo = fopen("Arquivos.txt","r+b");
+	if(arquivo == NULL){
+		cout<<"erro ao abrir o arquivo de registro";
+	}
+	else{
+		do{
+		cout<<"Remover Aluno por: \n1 - Matricula \t\t2 - CPF? \nEscolha uma opcao de acordo com o numero: ";
+		cin>>op;
+		switch(op){
+			case 1:
+				cout<<"Digite a Matricula do aluno: ";
+				cin>>matricula;
+				break;
+			case 2:fflush(stdin);
+				cout<<"Digite o CPF do aluno :";
+				gets(cpf2);
+				for(int x=0;x<11;x++){
+				cpf[x] = static_cast<int>(cpf2[x] - 48);
+				}
+				break;
+			default:
+				cout<<"\nopcao invalida! Digite novamente: \n";
+				break;
+		}
+		
+	while(fread(&al,sizeof(alunos), 1, arquivo)){
+		int x;
+		x++;
+		if(cpf[x]==al.cpf[x]){
+			resposta=resposta+1;
+			if(resposta==11){
+				break;
+			}
+		}
+		cout<<resposta<<"\n";
+		
+	
+	if(al.matricula==matricula||resposta==11)
+	{
+	
+		fseek(arquivo,0-sizeof(al),SEEK_CUR);
+		al.matricula=9999999;
+		fwrite(&al,sizeof(al),1,arquivo);
+		fclose(arquivo);
+		cout<<"REGISTRO DELETADO PERMANENTEMENTE!";
+		
+		
+	}
+}
+	}while(op<1||op>2);
+	do{
+	
+	cout<<"\n\n(1) - Voltar ao Menu Inicial  |   (2) - SAIR :\n ";
+	cin>>opc;
+	switch(opc){
+		case 1:
+			fclose(arquivo);
+			system("cls");
+			menuPrincipal();
+			break;
+		case 2:
+			exit(0);
+			break;
+		default:cout<<"Opcao invalida\n ";
+		break;
+	}
+}while(opc<1||opc>2);
+}
+	fclose(arquivo);
+}
+
+
+
+void ler(int po, int po2[]){
+	int mat=po;
+	int cpf[11];
+	int mat2=99999999;
+	for(int x=0;x<11;x++){
+		cpf[x]=po2[x];
+	}
+
+	FILE* arquivo;
+	alunos al;
+	arquivo = fopen("Arquivos.txt","rb+");
+	while(fread(&al,sizeof(alunos), 1, arquivo)==0){
+		if(mat==al.matricula||cpf[0]==al.cpf[0]&&cpf[1]==al.cpf[1]&&cpf[2]==al.cpf[2]&&cpf[3]==al.cpf[3]&&cpf[4]==al.cpf[4]&&cpf[5]==al.cpf[5]&&cpf[6]==al.cpf[6]&&cpf[7]==al.cpf[7]&&cpf[8]==al.cpf[8]&&cpf[9]==al.cpf[9]&&cpf[10]==al.cpf[10])
+	{
+		al.matricula==mat2;
+		fwrite(&al,sizeof(alunos), 1,arquivo);
+	}
+	}
+	
+	fclose(arquivo);
+	
+
+}
